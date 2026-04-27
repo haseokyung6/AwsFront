@@ -9,7 +9,7 @@ function App() {
     // 예시: const albAddress = "http://my-alb-123456789.ap-northeast-2.elb.amazonaws.com";
     const albAddress = process.env.REACT_APP_API_BASE_URL || "http://localhost:8080";
 
-    setMessage('호출 중...');
+    setMessage('호출 중....');
     setError(null);
 
     try {
