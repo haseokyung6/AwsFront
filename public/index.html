@@ -1,12 +1,160 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AWS 3-Tier React Frontend</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>별자리 운세</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #312e81, #581c87);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(12px);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #ddd6fe;
+      margin-bottom: 28px;
+    }
+
+    .zodiac-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 10px;
+      background: rgba(255, 255, 255, 0.18);
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.32);
+      transform: translateY(-2px);
+    }
+
+    .result-box {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 20px;
+      padding: 24px;
+      min-height: 150px;
+      text-align: left;
+    }
+
+    .result-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #fde68a;
+    }
+
+    .result-text {
+      line-height: 1.7;
+      color: #f8fafc;
+    }
+
+    .footer {
+      margin-top: 24px;
+      font-size: 13px;
+      color: #c4b5fd;
+    }
+
+    @media (max-width: 600px) {
+      .zodiac-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      h1 {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✨ 오늘의 별자리 운세 ✨</h1>
+    <p class="subtitle">별자리를 선택하면 오늘의 간단한 운세를 확인할 수 있습니다.</p>
+
+    <div class="zodiac-grid">
+      <button onclick="showFortune('양자리')">양자리</button>
+      <button onclick="showFortune('황소자리')">황소자리</button>
+      <button onclick="showFortune('쌍둥이자리')">쌍둥이자리</button>
+      <button onclick="showFortune('게자리')">게자리</button>
+      <button onclick="showFortune('사자자리')">사자자리</button>
+      <button onclick="showFortune('처녀자리')">처녀자리</button>
+      <button onclick="showFortune('천칭자리')">천칭자리</button>
+      <button onclick="showFortune('전갈자리')">전갈자리</button>
+      <button onclick="showFortune('사수자리')">사수자리</button>
+      <button onclick="showFortune('염소자리')">염소자리</button>
+      <button onclick="showFortune('물병자리')">물병자리</button>
+      <button onclick="showFortune('물고기자리')">물고기자리</button>
+    </div>
+
+    <div class="result-box">
+      <div class="result-title" id="title">별자리를 선택해주세요</div>
+      <div class="result-text" id="fortune">
+        오늘의 운세가 이곳에 표시됩니다.
+      </div>
+    </div>
+
+    <div class="footer">
+      AWS CLI · S3 · GitHub Actions 배포 테스트 페이지
+    </div>
+  </div>
+
+  <script>
+    const fortunes = {
+      "양자리": "오늘은 빠르게 결정하기보다 한 번 더 확인하는 태도가 좋습니다. 작은 실수를 줄이면 좋은 결과가 따라올 수 있습니다.",
+      "황소자리": "꾸준히 해오던 일이 빛을 보기 좋은 날입니다. 금전적인 판단은 충동보다 안정성을 우선하세요.",
+      "쌍둥이자리": "대화 속에서 좋은 기회가 생길 수 있습니다. 연락을 미루지 말고 먼저 움직여보세요.",
+      "게자리": "감정적으로 예민해질 수 있지만, 주변 사람의 도움을 받으면 쉽게 풀릴 수 있습니다.",
+      "사자자리": "자신감을 보여주기 좋은 날입니다. 다만 상대방의 의견도 함께 들어주면 더 좋은 평가를 받을 수 있습니다.",
+      "처녀자리": "정리와 점검이 중요한 하루입니다. 미뤄둔 일을 하나씩 처리하면 마음이 한결 가벼워집니다.",
+      "천칭자리": "사람들과의 균형이 중요합니다. 무리하게 맞추기보다 솔직하게 말하는 것이 좋습니다.",
+      "전갈자리": "집중력이 좋아지는 날입니다. 깊게 파고들어야 하는 일에 시간을 쓰면 성과가 있을 수 있습니다.",
+      "사수자리": "새로운 시도를 하기 좋은 날입니다. 작은 변화가 생각보다 큰 활력을 줄 수 있습니다.",
+      "염소자리": "책임감이 강해지는 하루입니다. 부담을 혼자 안기보다 역할을 나누는 것이 좋습니다.",
+      "물병자리": "색다른 아이디어가 떠오를 수 있습니다. 평소와 다른 방식으로 문제를 바라보세요.",
+      "물고기자리": "직감이 잘 맞는 날입니다. 다만 중요한 결정은 감정만이 아니라 현실적인 조건도 함께 보세요."
+    };
+
+    function showFortune(sign) {
+      document.getElementById("title").innerText = sign + " 운세";
+      document.getElementById("fortune").innerText = fortunes[sign];
+    }
+  </script>
+</body>
 </html>
